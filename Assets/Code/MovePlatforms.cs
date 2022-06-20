@@ -8,8 +8,8 @@ public class MovePlatforms : MonoBehaviour
     private float countdown;
     Vector3 startingPosition, destinationPosition, travelingPosition;
     bool changeDirection, waitInPosition;
-    private enum MovementType { None, UpDown, Sideways, BackForward }
-    [SerializeField] MovementType movementType = new MovementType();
+    [HideInInspector] public enum MovementType { None, UpDown, Sideways, BackForward }
+    public MovementType movementType = new MovementType();
 
     // Start is called before the first frame update
     void Start()

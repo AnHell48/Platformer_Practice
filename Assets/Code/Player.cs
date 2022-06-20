@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    float speed, runSpeed, mouseX,mouseY, mouseXSensitivity, mouseYSensitivity;
+    float speed, runSpeed, mouseX,mouseY, mouseXSensitivity, mouseYSensitivity, maxHealth;
     public GameObject cam;
     CapsuleCollider capCol;
     Quaternion camRot;
     Vector3 offset;
+    Score score;
+    HealthManager playersHealth;
 
     // Start is called before the first frame update
     void Start()
     {
+        score = GetComponent<Score>();
+        //playersHealth = GetComponent<HealthManager>();
+        maxHealth = 20f;
+        playersHealth = new HealthManager(maxHealth);
         capCol = this.GetComponent<CapsuleCollider>();
         speed = 5.0f;
         runSpeed = speed  + 3f;
@@ -55,9 +61,9 @@ public class Player : MonoBehaviour
         //camera follow player
         cam.transform.position = Vector3.Slerp(cam.transform.position, newCamPos, 1f);
         // camera(camera pivot) rotation with mouse sideways
-        cam.transform.Rotate(mouseX, mouseY, 0);
+        cam.transform.Rotate(0, mouseY, 0);
 
-        this.transform.Rotate(0, cam.transform.localRotation.y,0);//Rotate(new Vector3(0,cam.transform.localRotation.y,0));
+        this.transform.localRotation = cam.transform.localRotation;//Rotate(new Vector3(0,cam.transform.localRotation.y,0));
     }
 
     private bool IsGrounded()
@@ -77,17 +83,17 @@ public class Player : MonoBehaviour
         {
             case 6:
                 //moving platform
-                if(col.gameObject.CompareTag("movablePlarform"))
+                if(col.gameObject.CompareTag("movablePlarform") && col.gameObject.GetComponent<MovePlatforms>().movementType != MovePlatforms.MovementType.UpDown)
                     this.transform.parent = col.gameObject.transform;
                 break;
             case 7:
                 Debug.Log("EXIT");
                 break;
             case 8:
-                Debug.Log("bling");
+                PickUpCollectable(col.gameObject);
                 break;
             case 9:
-                Debug.Log("ENEMY!!!!");
+                EnemyEncounter(col.gameObject);
                 break;
             default:
                 break;
@@ -106,6 +112,21 @@ public class Player : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    private void PickUpCollectable(GameObject collectable)
+    {
+        Destroy(collectable);
+        score.AddPoints(1);
+        /*TODO
+         * activate particles
+         */
+    }
+
+    private void EnemyEncounter(GameObject enemy)
+    {
+        playersHealth.TakeDamage(4f);
+        Debug.Log(playersHealth.checkHealth);
     }
 
 }
