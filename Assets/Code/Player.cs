@@ -23,10 +23,10 @@ public class Player : MonoBehaviour
         speed = 5.0f;
         runSpeed = speed  + 3f;
         mouseXSensitivity = mouseYSensitivity = 2f;
-        offset =  cam.transform.position - this.transform.position;
+        //offset =  cam.transform.position - this.transform.position;
 
-        cam.transform.position = this.transform.position;
-        cam.transform.rotation = this.transform.localRotation;
+        //cam.transform.position = this.transform.position;
+        //cam.transform.rotation = this.transform.localRotation;
         ////cam.transform.localPosition = new Vector3(0, 2, -8);
         ////cam.transform.SetParent(this.transform);
         //camRot = cam.transform.localRotation;
@@ -35,10 +35,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mouseX = Input.GetAxis("Mouse Y") * mouseXSensitivity;
-        mouseY = Input.GetAxis("Mouse X") * mouseYSensitivity;
+        //    mouseX = Input.GetAxis("Mouse Y") * mouseXSensitivity;
+        //    mouseY = Input.GetAxis("Mouse X") * mouseYSensitivity;
 
-        camRot *= Quaternion.Euler(0,mouseY, 0);
+        //    camRot *= Quaternion.Euler(0,mouseY, 0);
         Movement();
     }
 
@@ -54,16 +54,11 @@ public class Player : MonoBehaviour
         //}
 
         this.transform.Translate(new Vector3(Input.GetAxis("Horizontal") * speed * Time.deltaTime, 0, Input.GetAxis("Vertical") * speed * Time.deltaTime));
-     
-        //camera
-        //distance between camera and player
-        Vector3 newCamPos = this.transform.position + offset;
-        //camera follow player
-        cam.transform.position = Vector3.Slerp(cam.transform.position, newCamPos, 1f);
-        // camera(camera pivot) rotation with mouse sideways
-        cam.transform.Rotate(0, mouseY, 0);
 
-        this.transform.localRotation = cam.transform.localRotation;//Rotate(new Vector3(0,cam.transform.localRotation.y,0));
+        Vector3 _camRot = new Vector3(0,cam.transform.localRotation.y,0);
+        Debug.Log("Cam: " + camRot);
+        this.transform.Rotate(_camRot);
+        Debug.Log("localrot: " + transform.localRotation + "rot: "+ transform.rotation);
     }
 
     private bool IsGrounded()
@@ -81,11 +76,6 @@ public class Player : MonoBehaviour
     {
         switch(col.gameObject.layer)
         {
-            case 6:
-                //moving platform
-                if(col.gameObject.CompareTag("movablePlarform") && col.gameObject.GetComponent<MovePlatforms>().movementType != MovePlatforms.MovementType.UpDown)
-                    this.transform.parent = col.gameObject.transform;
-                break;
             case 7:
                 Debug.Log("EXIT");
                 break;
@@ -100,19 +90,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit(Collision col)
-    {
-        switch (col.gameObject.layer)
-        {
-            case 6:
-                //moving platform
-                if (col.gameObject.CompareTag("movablePlarform"))
-                    this.transform.parent = null;
-                break;
-            default:
-                break;
-        }
-    }
+    //private void OnCollisionExit(Collision col)
+    //{
+    //    switch (col.gameObject.layer)
+    //    {
+    //        case 6:
+    //            //moving platform
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
 
     private void PickUpCollectable(GameObject collectable)
     {

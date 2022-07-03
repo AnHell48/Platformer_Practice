@@ -59,6 +59,19 @@ public class MovePlatforms : MonoBehaviour
             }
         }
     }
+    private void OnCollisionEnter(Collision col)
+    {
+        //make object stay on platform while is NOT going up and down or still
+        if (movementType != MovementType.None && movementType != MovementType.UpDown)
+        {
+            col.gameObject.transform.parent = this.transform;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+    }
 
     private bool CanChangeDirection()
     {
